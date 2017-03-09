@@ -2,6 +2,9 @@
 # vi: set ft=ruby :
 
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+# Changed: add ansible install
+# Changed: expose ports 4505-4506
+
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -12,6 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master_config.vm.box = "ubuntu/trusty64"
     master_config.vm.host_name = 'saltmaster.local'
     master_config.vm.network "private_network", ip: "192.168.50.10"
+	  master_config.vm.network "forwarded_port", guest: 4506, host: 4506
+    master_config.vm.network "forwarded_port", guest: 4505, host: 4505
     master_config.vm.synced_folder "saltstack/salt/", "/srv/salt"
     master_config.vm.synced_folder "saltstack/pillar/", "/srv/pillar"
 
@@ -33,6 +38,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       salt.colorize = true
       salt.bootstrap_options = "-P -c /tmp"
     end
+        
+  master_config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y software-properties-common
+    apt-add-repository ppa:ansible/ansible
+    apt-get update
+    apt-get install -y ansible
+  SHELL
+
   end
 
   config.vm.define :minion1 do |minion_config|
@@ -70,5 +84,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       salt.bootstrap_options = "-P -c /tmp"
     end
   end
-
+  
 end
