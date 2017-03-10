@@ -40,11 +40,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
         
   master_config.vm.provision "shell", inline: <<-SHELL
-    apt-get update
-    apt-get install -y software-properties-common
-    apt-add-repository ppa:ansible/ansible
-    apt-get update
-    apt-get install -y ansible
+    sudo apt-get update
+    sudo apt-get install -y software-properties-common
+    sudo apt-add-repository ppa:ansible/ansible
+    sudo apt-get update
+    sudo apt-get install -y ansible git mc vim openjdk-7-jdk
   SHELL
 
   end
